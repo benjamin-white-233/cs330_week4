@@ -104,7 +104,7 @@ void Application::setupInputs() {
                 }
                 break;
             }
-            case GLFW_KEY_O: {
+            case GLFW_KEY_P: {
                 if (action == GLFW_PRESS) {
                     app->_camera.SetIsPerspective(!app->_camera.IsPerspective());
                 }
@@ -116,13 +116,14 @@ void Application::setupInputs() {
     glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xpos, double ypos) {
         auto* app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 
-//        app->mousePositionCallback(xpos, ypos);
+        app->mousePositionCallback(xpos, ypos);
     });
 
     glfwSetScrollCallback(_window, [](GLFWwindow* window, double xOffset, double yOffset) {
         auto* app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 
-        app->_camera.IncrementZoom(yOffset * 2);
+        app->IncrementSpeed(yOffset);
+
         std::cout << "Mouse wheel (" << xOffset << ", " << yOffset << ")" << std::endl;
     });
 
@@ -164,18 +165,8 @@ void Application::setupInputs() {
 
 void Application::setupScene() {
     // creating different meshes for each shape and manipulating the position
-    auto& bridgePillar1 = _meshes.emplace_back(Shapes::bridgePillarVertices, Shapes::bridgePillarElements);
-    bridgePillar1.Transform = glm::translate(bridgePillar1.Transform, glm::vec3(1.f, -0.5f, 0.0f));
-
-    auto& bridgePillar2 = _meshes.emplace_back(Shapes::bridgePillarVertices, Shapes::bridgePillarElements);
-    bridgePillar2.Transform = glm::translate(bridgePillar2.Transform, glm::vec3(-1.f, -0.5f, 0.0f));
-
-    auto& bridgeTop = _meshes.emplace_back(Shapes::bridgeTopVertices, Shapes::bridgeTopElements);
-    bridgeTop.Transform = glm::translate(bridgeTop.Transform, glm::vec3(0.0f, 0.90f, 0.0f));
-    bridgeTop.Transform = glm::rotate(bridgeTop.Transform, glm::radians(90.f), glm::vec3(0, 1, 0));
-
-    auto& bridgeBody = _meshes.emplace_back(Shapes::bridgeBodyVertices, Shapes::cubeElements);
-    bridgeBody.Transform = glm::translate(bridgeBody.Transform, glm::vec3(0.0f, 0.25f, 0.0f));
+    auto& pyramid = _meshes.emplace_back(Shapes::pyramidVertices, Shapes::pyramidElements);
+    pyramid.Transform = glm::translate(pyramid.Transform, glm::vec3(1.f, -0.5f, 0.0f));
 
     // declaring paths to shaderfiles
     Path shaderPath = std::filesystem::current_path() / "shaders";
@@ -219,7 +210,7 @@ bool Application::draw() {
 
 void Application::handleInput(float deltaTime) {
 
-    auto moveAmount = _moveSpeed * deltaTime;
+    auto moveAmount = abs(_moveSpeed * deltaTime);
 
     if (glfwGetKey(_window, GLFW_KEY_W)) {
         _camera.MoveCamera(Camera::MoveDirection::Forward, moveAmount);
@@ -264,4 +255,7 @@ void Application::mousePositionCallback(double xpos, double ypos) {
     _camera.RotateBy(moveAmount.x * _cameraLookSpeed.x, moveAmount.y * _cameraLookSpeed.y);
 }
 
-
+void Application::IncrementSpeed(double amount) {
+//    GLfloat speed = 0.05f;
+    _moveSpeed += amount;
+}

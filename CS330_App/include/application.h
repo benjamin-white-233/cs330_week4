@@ -24,6 +24,8 @@ private:
     void handleInput(float deltaTime);
     void mousePositionCallback(double xpos, double ypos);
 
+    void IncrementSpeed(double amount);
+
 private:
     std::string _applicationName {};
     int _width {};

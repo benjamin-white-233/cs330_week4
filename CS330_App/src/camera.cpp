@@ -89,3 +89,5 @@ void Camera::IncrementZoom(float amount) {
 
     _fieldOfView = std::clamp(_fieldOfView, 1.f, 75.f);
 }
+
+
