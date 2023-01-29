@@ -97,6 +97,7 @@ void Application::setupInputs() {
     glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         auto* app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 
+        // establishing key press actions
         switch (key) {
             case GLFW_KEY_ESCAPE: {
                 if (action == GLFW_PRESS) {
@@ -104,6 +105,7 @@ void Application::setupInputs() {
                 }
                 break;
             }
+            // switch to ortho camera
             case GLFW_KEY_P: {
                 if (action == GLFW_PRESS) {
                     app->_camera.SetIsPerspective(!app->_camera.IsPerspective());
@@ -190,7 +192,6 @@ bool Application::draw() {
     // set model view projection matrix
     glm::mat4 view = _camera.GetViewMatrix();
     glm::mat4 projection = _camera.GetProjectionMatrix();
-//    glm::mat4 model = glm::mat4 { 1.f };
 
     // set matrices in the shader
     _shader.Bind();
@@ -208,6 +209,7 @@ bool Application::draw() {
     return false;
 }
 
+// assigning keys to a movement direction
 void Application::handleInput(float deltaTime) {
 
     auto moveAmount = abs(_moveSpeed * deltaTime);
@@ -255,7 +257,7 @@ void Application::mousePositionCallback(double xpos, double ypos) {
     _camera.RotateBy(moveAmount.x * _cameraLookSpeed.x, moveAmount.y * _cameraLookSpeed.y);
 }
 
+// incrementing camera movement speed
 void Application::IncrementSpeed(double amount) {
-//    GLfloat speed = 0.05f;
     _moveSpeed += amount;
 }
